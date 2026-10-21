@@ -1,6 +1,8 @@
 package br.com.jaanalves.ecommerce_product.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -9,9 +11,18 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "O Nome do Produto é obrigatório")
+    @Column(nullable = false)
     private String nome;
+    @NotBlank(message = "A descrição do produto é obrigatório")
+    @Column(nullable = false)
     private String descricao;
+    @NotNull(message = "O valor do produto é obrigatorio")
+    @Positive(message = "O preço precisa ser maior que zero")
+    @Column(nullable = false)
     private BigDecimal preco;
+    @NotNull(message = "A quantidade em estoque é obrigatória")
+    @Positive(message = "A quantidade minima no estoque deve ser maior ou igual a 1")
     private Integer quantidadeEstoque;
 
     // Construtor

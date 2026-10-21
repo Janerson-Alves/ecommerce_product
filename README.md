@@ -1,6 +1,6 @@
 # 🛒 E-commerce Product API
 
-API desenvolvida em **Spring Boot** para gerenciar o catálogo de produtos de um sistema de e-commerce, focando em arquitetura limpa, boas práticas de desenvolvimento backend e evolução contínua.
+API desenvolvida em **Spring Boot** para gerenciar o catálogo de produtos de um sistema de e-commerce, focando em arquitetura limpa, separação de responsabilidades em camadas e validações de integridade de dados.
 
 ---
 
@@ -10,9 +10,19 @@ API desenvolvida em **Spring Boot** para gerenciar o catálogo de produtos de um
 - **Spring Boot 3**
 - **Spring Data JPA / Hibernate**
 - **Spring Web**
-- **Bean Validation**
+- **Bean Validation (Jakarta Validation)**
 - **PostgreSQL**
 - **Docker & Docker Compose**
+
+---
+
+## 📁 Arquitetura do Projeto
+
+O projeto segue o padrão de **Arquitetura em Camadas**:
+- **Controller (`/controller`):** Porta de entrada REST, responsável por receber requisições HTTP, disparar o Bean Validation (`@Valid`) e retornar respostas padronizadas.
+- **Service (`/services`):** Concentra as regras de negócio e o fluxo de processamento da aplicação, isolando o controller do acesso direto ao banco.
+- **Repository (`/repository`):** Interface de persistência estendendo `JpaRepository` para comunicação direta com o banco de dados.
+- **Entity (`/entities`):** Modelos de dados mapeados para o banco relacional utilizando JPA/Hibernate.
 
 ---
 
@@ -40,21 +50,39 @@ O banco subirá na porta `5436` com as seguintes credenciais configuradas no `ap
 
 ---
 
-## 📡 Endpoints da API
+## 📡 Endpoints da API e Validações
 
 ### 1. Cadastrar Produto
 - **Rota:** `POST /api/produtos`
-- **Exemplo de Body (JSON):**
+- **Regras de Validação:** 
+  - O nome e a descrição são obrigatórios e não podem estar em branco (`@NotBlank`).
+  - O preço e a quantidade em estoque não podem ser nulos e devem ser valores estritamente positivos (`@NotNull`, `@Positive`).
+- **Exemplo de Body (JSON) Válido:**
 ```json
 {
-  "nome": "Iphone 17 Pro Max",
-  "descricao": "Celular Iphone 17 Pro Max, lançamento 2025.",
-  "preco": 7999.99
+  "nome": "Carregador Turbo",
+  "descricao": "Carregador turbo bivolt para Android e iPhone.",
+  "preco": 149.99,
+  "quantidadeEstoque": 10
 }
 ```
 
 ### 2. Listar Produtos
 - **Rota:** `GET /api/produtos`
-- **Retorno:** Lista em JSON com todos os produtos cadastrados no banco de dados.
+- **Retorno:** Lista em JSON contendo todos os produtos cadastrados e persistidos no banco de dados.
 
 ---
+
+## 🖥️ Comandos Git para Atualizar o Repositório
+
+Abra o terminal da sua IDE na pasta raiz do projeto e execute os comandos abaixo para enviar as alterações para o GitHub:
+
+```bash
+git add .
+git commit -m "docs: atualiza readme e codigo com implementacao das tasks 02 (validacoes) e 03 (service)"
+git push origin main
+```
+
+---
+
+Feito com ☕ por **Janerson Alves**.
