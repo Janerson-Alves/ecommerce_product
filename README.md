@@ -72,17 +72,3 @@ O banco subirá na porta `5436` com as seguintes credenciais configuradas no `ap
 - **Retorno:** Lista em JSON contendo todos os produtos cadastrados e persistidos no banco de dados.
 
 ---
-
-## 🖥️ Comandos Git para Atualizar o Repositório
-
-Abra o terminal da sua IDE na pasta raiz do projeto e execute os comandos abaixo para enviar as alterações para o GitHub:
-
-```bash
-git add .
-git commit -m "docs: atualiza readme e codigo com implementacao das tasks 02 (validacoes) e 03 (service)"
-git push origin main
-```
-
----
-
-Feito com ☕ por **Janerson Alves**.
