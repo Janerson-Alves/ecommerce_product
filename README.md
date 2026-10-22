@@ -1,6 +1,6 @@
 # 🛒 E-commerce Product API
 
-API desenvolvida em **Spring Boot** para gerenciar o catálogo de produtos de um sistema de e-commerce, focando em arquitetura limpa, separação de responsabilidades em camadas e validações de integridade de dados.
+API desenvolvida em **Spring Boot** para gerenciar o catálogo de produtos de um sistema de e-commerce, focando em arquitetura limpa, separação de responsabilidades em camadas, validações robustas e tratamento global de exceções.
 
 ---
 
@@ -18,11 +18,12 @@ API desenvolvida em **Spring Boot** para gerenciar o catálogo de produtos de um
 
 ## 📁 Arquitetura do Projeto
 
-O projeto segue o padrão de **Arquitetura em Camadas**:
+O projeto segue o padrão de **Arquitetura em Camadas** e **Tratamento Centralizado**:
 - **Controller (`/controller`):** Porta de entrada REST, responsável por receber requisições HTTP, disparar o Bean Validation (`@Valid`) e retornar respostas padronizadas.
-- **Service (`/services`):** Concentra as regras de negócio e o fluxo de processamento da aplicação, isolando o controller do acesso direto ao banco.
-- **Repository (`/repository`):** Interface de persistência estendendo `JpaRepository` para comunicação direta com o banco de dados.
-- **Entity (`/entities`):** Modelos de dados mapeados para o banco relacional utilizando JPA/Hibernate.
+- **Service (`/services`):** Concentra as regras de negócio (como validação de duplicidade com `existsByNome`) e o fluxo de processamento da aplicação.
+- **Repository (`/repository`):** Interface de persistência estendendo `JpaRepository` para comunicação direta com o banco relacional.
+- **Entity (`/entities`):** Modelos de dados mapeados para o banco utilizando JPA/Hibernate.
+- **Exceptions & DTOs (`/exceptions` e `/dto`):** Tratamento global de erros (`@RestControllerAdvice`) devolvendo payloads padronizados em `StandardErrorDTO`.
 
 ---
 
@@ -50,13 +51,14 @@ O banco subirá na porta `5436` com as seguintes credenciais configuradas no `ap
 
 ---
 
-## 📡 Endpoints da API e Validações
+## 📡 Endpoints, Validações e Tratamento de Erros
 
 ### 1. Cadastrar Produto
 - **Rota:** `POST /api/produtos`
-- **Regras de Validação:** 
-  - O nome e a descrição são obrigatórios e não podem estar em branco (`@NotBlank`).
-  - O preço e a quantidade em estoque não podem ser nulos e devem ser valores estritamente positivos (`@NotNull`, `@Positive`).
+- **Regras de Validação & Negócio:** 
+  - O nome e a descrição são obrigatórios (`@NotBlank`).
+  - O preço e a quantidade em estoque devem ser positivos (`@NotNull`, `@Positive`).
+  - O sistema valida se já existe um produto cadastrado com o mesmo nome via `existsByNome`, lançando exceção de negócio caso ocorra duplicidade (`IllegalArgumentException`).
 - **Exemplo de Body (JSON) Válido:**
 ```json
 {
@@ -69,6 +71,20 @@ O banco subirá na porta `5436` com as seguintes credenciais configuradas no `ap
 
 ### 2. Listar Produtos
 - **Rota:** `GET /api/produtos`
-- **Retorno:** Lista em JSON contendo todos os produtos cadastrados e persistidos no banco de dados.
+- **Retorno:** Lista em JSON contendo todos os produtos cadastrados.
 
 ---
+
+## ⚠️ Tratamento de Erros Padronizado (`GlobalExceptionHandler`)
+
+Caso ocorra uma falha de validação de campos ou de regra de negócio, a API intercepta a exceção e retorna um JSON estruturado (`StandardErrorDTO`) com status `400 Bad Request`:
+
+```json
+{
+  "timestamp": "2026-10-22T18:00:00Z",
+  "status": 400,
+  "error": "Regra de negócio Violada",
+  "message": "Esse produto já existe. Favor cadastrar um produto novo.",
+  "path": "/api/produtos"
+}
+```

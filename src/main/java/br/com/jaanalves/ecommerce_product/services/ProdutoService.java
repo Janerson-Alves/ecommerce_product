@@ -4,6 +4,7 @@ import br.com.jaanalves.ecommerce_product.entities.Produto;
 import br.com.jaanalves.ecommerce_product.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
