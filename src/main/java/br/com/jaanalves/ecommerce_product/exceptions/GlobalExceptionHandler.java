@@ -57,4 +57,22 @@ public class GlobalExceptionHandler {
         // Retorna a mensagem de exceção
         return ResponseEntity.status(status).body(error);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<StandardErrorDTO> handleNotFoundException(ResourceNotFoundException ex,
+                                                                    HttpServletRequest request) {
+        // Status NotFound
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        // Instanciando o Erro em DTO
+        StandardErrorDTO error = new StandardErrorDTO(
+                Instant.now(),
+                status.value(),
+                "Recurso Não Encontrado",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        // retornando a mensagem de exceção.
+        return ResponseEntity.status(status).body(error);
+    }
 }

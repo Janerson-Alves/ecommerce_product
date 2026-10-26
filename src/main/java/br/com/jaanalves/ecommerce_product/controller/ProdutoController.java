@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/produtos")
@@ -29,5 +30,26 @@ public class ProdutoController {
     public ResponseEntity<List<Produto>> listarProdutos() {
         List<Produto> listarProdutos = produtoService.listarProdutos();
         return ResponseEntity.ok().body(listarProdutos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity listaPorId(@PathVariable Long id) {
+        Produto encontrado = produtoService.buscarPorId(id);
+        return ResponseEntity.ok(encontrado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity atualizarProduto(@Valid @PathVariable Long id, @RequestBody Produto produto) {
+        Produto produtoAtualizado = produtoService.atualizarProdutoPorId(id, produto);
+        return ResponseEntity.ok(Map.of(
+                "mensagem", "Produto atualizado com sucesso!",
+                "produto", produtoAtualizado
+        ));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deletarProduto(@PathVariable Long id) {
+        produtoService.excluirProduto(id);
+        return ResponseEntity.ok("Produto deletado com sucesso");
     }
 }
