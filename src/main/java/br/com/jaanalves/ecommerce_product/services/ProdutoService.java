@@ -3,9 +3,16 @@ package br.com.jaanalves.ecommerce_product.services;
 import br.com.jaanalves.ecommerce_product.entities.Produto;
 import br.com.jaanalves.ecommerce_product.exceptions.ResourceNotFoundException;
 import br.com.jaanalves.ecommerce_product.repository.ProdutoRepository;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +33,13 @@ public class ProdutoService {
     }
 
     // Listar Produtos
-    public List<Produto> listarProdutos() {
-        // Armazena em uma lista todos os produtos cadastrados
-        List<Produto> listarProdutos = produtoRepository.findAll();
+    public Page<Produto> listarProdutos(String nome, BigDecimal precoInicio, BigDecimal precoFim, Pageable pageable) {
+        // Armazena em uma lista os produtos cadastrados no determinado filtro
+        Page<Produto> listarProdutosPage = produtoRepository.findByNomeContainingIgnoreCaseAndPrecoBetween(
+                nome, precoInicio, precoFim, pageable
+        );
         // retorna os produtos cadastrados em uma lista
-        return listarProdutos;
+        return listarProdutosPage;
     }
 
     // Buscar por Id
