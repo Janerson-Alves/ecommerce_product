@@ -1,19 +1,18 @@
 package br.com.jaanalves.ecommerce_product.services;
 
+import br.com.jaanalves.ecommerce_product.dto.ProdutoRequestDTO;
+import br.com.jaanalves.ecommerce_product.dto.ProdutoResponseDTO;
 import br.com.jaanalves.ecommerce_product.entities.Produto;
 import br.com.jaanalves.ecommerce_product.exceptions.ResourceNotFoundException;
 import br.com.jaanalves.ecommerce_product.repository.ProdutoRepository;
-import org.springdoc.core.annotations.ParameterObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,27 +22,46 @@ public class ProdutoService {
     ProdutoRepository produtoRepository;
 
     // Cadastro do produto
-    public Produto cadastrarProduto(Produto produto) {
+    public ProdutoResponseDTO cadastrarProduto(ProdutoRequestDTO dto) {
         // Verifica se o nome do produto já existe
-        if (produtoRepository.existsByNome(produto.getNome())) {
+        if (produtoRepository.existsByNome(dto.getNome())) {
             throw new IllegalArgumentException("Esse produto já existe. Favor cadastrar um produto novo.");
         }
-        // Salvar o produto cadastrado no banco
-        return produtoRepository.save(produto);
+
+        // Convertendo um DTO para Entities
+        Produto produto = new Produto();
+            produto.setNome(dto.getNome());
+            produto.setDescricao(dto.getDescricao());
+            produto.setPreco(dto.getPreco());
+            produto.setQuantidadeEstoque(dto.getQuantidadeEstoque());
+        // Salvando no banco
+        Produto produtoSalvo = produtoRepository.save(produto);
+
+        // Criando o DTO para retorno
+        return new ProdutoResponseDTO(
+                produtoSalvo.getId(),
+                produtoSalvo.getNome(),
+                produtoSalvo.getDescricao(),
+                produtoSalvo.getPreco(),
+                produtoSalvo.getQuantidadeEstoque()
+        );
     }
 
     // Listar Produtos
-    public Page<Produto> listarProdutos(String nome, BigDecimal precoInicio, BigDecimal precoFim, Pageable pageable) {
+    public Page<ProdutoResponseDTO> listarProdutos(String nome, BigDecimal precoInicio,
+                                                   BigDecimal precoFim, Pageable pageable) {
         // Armazena em uma lista os produtos cadastrados no determinado filtro
         Page<Produto> listarProdutosPage = produtoRepository.findByNomeContainingIgnoreCaseAndPrecoBetween(
                 nome, precoInicio, precoFim, pageable
         );
-        // retorna os produtos cadastrados em uma lista
-        return listarProdutosPage;
+        // retorna os produtos cadastrados em um DTO
+        return listarProdutosPage
+                .map(t -> new ProdutoResponseDTO(t.getId(), t.getNome(), t.getDescricao(),
+                        t.getPreco(), t.getQuantidadeEstoque()));
     }
 
     // Buscar por Id
-    public Produto buscarPorId(Long id) {
+    public ProdutoResponseDTO buscarPorId(Long id) {
         // Armazena o Id se caso existir
         Optional<Produto> encontrado = produtoRepository.findById(id);
 
@@ -54,12 +72,19 @@ public class ProdutoService {
         // Armazena as informações do Id
         Produto produto = encontrado.get();
         // retorna as informações do produto encontrado.
-        return produto;
+        // Criando o DTO para retorno
+        return new ProdutoResponseDTO(
+                produto.getId(),
+                produto.getNome(),
+                produto.getDescricao(),
+                produto.getPreco(),
+                produto.getQuantidadeEstoque()
+        );
 
     }
 
     // Atualizar Produto.
-    public Produto atualizarProdutoPorId(Long id, Produto produtoAtualizado) {
+    public ProdutoResponseDTO atualizarProdutoPorId(Long id, ProdutoRequestDTO produtoAtualizado) {
         // Armazena o Id se caso existir
         Optional<Produto> encontrado = produtoRepository.findById(id);
 
@@ -77,9 +102,16 @@ public class ProdutoService {
         produto.setQuantidadeEstoque(produtoAtualizado.getQuantidadeEstoque());
 
         // Salva o produto no banco.
-        produtoRepository.save(produto);
-        // Retorna o produto atualizado.
-        return produto;
+        Produto produtoSalvo = produtoRepository.save(produto);
+
+        // Criando o DTO para retorno
+        return new ProdutoResponseDTO(
+                produtoSalvo.getId(),
+                produtoSalvo.getNome(),
+                produtoSalvo.getDescricao(),
+                produtoSalvo.getPreco(),
+                produtoSalvo.getQuantidadeEstoque()
+        );
 
     }
 
