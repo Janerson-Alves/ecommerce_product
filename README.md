@@ -106,3 +106,10 @@ Configurações (`application.properties`):
 
 * `400 Bad Request`: Falha em regras de negócio (ex: nome duplicado) ou erro de validação do DTO.
 * `404 Not Found`: Recurso não localizado para o ID fornecido.
+
+...
+## 🧪 Testes Unitários
+
+O projeto conta com uma suíte de testes unitários para garantir a estabilidade das regras de negócio da camada de serviço (`ProdutoService`), utilizando:
+* **JUnit 5:** Framework de testes.
+* **Mockito:** Framework para criação de mocks e isolamento do repositório relacional.
