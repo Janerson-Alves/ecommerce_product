@@ -3,6 +3,7 @@ package br.com.jaanalves.ecommerce_product.controller;
 import br.com.jaanalves.ecommerce_product.dto.ProdutoRequestDTO;
 import br.com.jaanalves.ecommerce_product.dto.ProdutoResponseDTO;
 import br.com.jaanalves.ecommerce_product.services.ProdutoService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,12 +25,14 @@ public class ProdutoController {
     @Autowired
     ProdutoService produtoService;
 
+    @Operation(summary = "Cadastro de produtos", description = "Realiza cadastros de produto e salva no banco.")
     @PostMapping
     public ResponseEntity cadastrarProduto(@Valid @RequestBody ProdutoRequestDTO produtoDTO) {
         produtoService.cadastrarProduto(produtoDTO);
         return ResponseEntity.ok("Produto cadastrado com sucesso");
     }
 
+    @Operation(summary = "Lista os produtos cadastrados.", description = "Lista os produtos cadastrados paginalmente.")
     @GetMapping
     public ResponseEntity<Page<ProdutoResponseDTO>> listarProdutos(
             @RequestParam String nome,
@@ -41,12 +44,14 @@ public class ProdutoController {
         return ResponseEntity.ok().body(listarProdutos);
     }
 
+    @Operation(summary = "Lista por ID.", description = "Lista o produto filtrado pelo ID.")
     @GetMapping("/{id}")
     public ResponseEntity listaPorId(@PathVariable Long id) {
         ProdutoResponseDTO encontrado = produtoService.buscarPorId(id);
         return ResponseEntity.ok(encontrado);
     }
 
+    @Operation(summary = "Atualização de produto.", description = "Atualiza o produto filtrado pelo ID.")
     @PutMapping("/{id}")
     public ResponseEntity atualizarProduto(@PathVariable Long id, @RequestBody @Valid ProdutoRequestDTO produto) {
         ProdutoResponseDTO produtoAtualizado = produtoService.atualizarProdutoPorId(id, produto);
@@ -55,7 +60,7 @@ public class ProdutoController {
                 "produto", produtoAtualizado
         ));
     }
-
+    @Operation(summary = "Excluir produto.", description = "Exclui um produto cadastrado filtrado pelo ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity deletarProduto(@PathVariable Long id) {
         produtoService.excluirProduto(id);

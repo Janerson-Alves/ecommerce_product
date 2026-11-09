@@ -113,3 +113,12 @@ Configurações (`application.properties`):
 O projeto conta com uma suíte de testes unitários para garantir a estabilidade das regras de negócio da camada de serviço (`ProdutoService`), utilizando:
 * **JUnit 5:** Framework de testes.
 * **Mockito:** Framework para criação de mocks e isolamento do repositório relacional.
+
+...
+## 📚 Documentação da API (Swagger UI)
+
+Com o **SpringDoc OpenAPI** integrado, a API é auto-documentada. Com a aplicação rodando, você pode acessar a interface interativa do Swagger UI diretamente no navegador para visualizar e testar os endpoints:
+
+* **URL do Swagger UI:** `http://localhost:8080/swagger-ui/index.html`
+* **JSON da API (OpenAPI):** `http://localhost:8080/v3/api-docs`
+...
