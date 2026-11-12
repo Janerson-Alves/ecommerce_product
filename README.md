@@ -115,10 +115,17 @@ O projeto conta com uma suíte de testes unitários para garantir a estabilidade
 * **Mockito:** Framework para criação de mocks e isolamento do repositório relacional.
 
 ...
+...
 ## 📚 Documentação da API (Swagger UI)
 
-Com o **SpringDoc OpenAPI** integrado, a API é auto-documentada. Com a aplicação rodando, você pode acessar a interface interativa do Swagger UI diretamente no navegador para visualizar e testar os endpoints:
+A API possui documentação interativa gerada automaticamente com **SpringDoc OpenAPI**. Cada endpoint está detalhado com seus respectivos contratos de DTOs e códigos de status HTTP mapeados:
 
 * **URL do Swagger UI:** `http://localhost:8080/swagger-ui/index.html`
-* **JSON da API (OpenAPI):** `http://localhost:8080/v3/api-docs`
-...
+* **JSON da API:** `http://localhost:8080/v3/api-docs`
+
+### Códigos de Status Mapeados:
+* `200 OK`: Sucesso em operações de leitura, atualização e exclusão.
+* `201 Created`: Produto cadastrado com sucesso.
+* `400 Bad Request`: Dados inválidos enviados no payload ou falha de validação.
+* `404 Not Found`: Recurso não encontrado pelo ID informado.
+  ...

@@ -4,6 +4,8 @@ import br.com.jaanalves.ecommerce_product.dto.ProdutoRequestDTO;
 import br.com.jaanalves.ecommerce_product.dto.ProdutoResponseDTO;
 import br.com.jaanalves.ecommerce_product.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,10 @@ public class ProdutoController {
     ProdutoService produtoService;
 
     @Operation(summary = "Cadastro de produtos", description = "Realiza cadastros de produto e salva no banco.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Produto cadastrado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou produto já existente")
+    })
     @PostMapping
     public ResponseEntity cadastrarProduto(@Valid @RequestBody ProdutoRequestDTO produtoDTO) {
         produtoService.cadastrarProduto(produtoDTO);
@@ -45,12 +51,20 @@ public class ProdutoController {
     }
 
     @Operation(summary = "Lista por ID.", description = "Lista o produto filtrado pelo ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Produto encontrado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity listaPorId(@PathVariable Long id) {
         ProdutoResponseDTO encontrado = produtoService.buscarPorId(id);
         return ResponseEntity.ok(encontrado);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Produto atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado")
+    })
     @Operation(summary = "Atualização de produto.", description = "Atualiza o produto filtrado pelo ID.")
     @PutMapping("/{id}")
     public ResponseEntity atualizarProduto(@PathVariable Long id, @RequestBody @Valid ProdutoRequestDTO produto) {
@@ -60,6 +74,10 @@ public class ProdutoController {
                 "produto", produtoAtualizado
         ));
     }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Produto excluido com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado")
+    })
     @Operation(summary = "Excluir produto.", description = "Exclui um produto cadastrado filtrado pelo ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity deletarProduto(@PathVariable Long id) {
