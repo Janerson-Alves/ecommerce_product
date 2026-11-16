@@ -25,6 +25,8 @@ public class Produto {
     @Positive(message = "A quantidade minima no estoque deve ser maior ou igual a 1")
     private Integer quantidadeEstoque;
 
+    private boolean ativo = true;
+
     // Construtor
     public Produto() {}
 
@@ -46,4 +48,6 @@ public class Produto {
     public void setPreco(BigDecimal preco) { this.preco = preco; }
     public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
     public void setQuantidadeEstoque(Integer quantidadeEstoque) { this.quantidadeEstoque = quantidadeEstoque; }
+    public boolean isAtivo() { return ativo; }
+    public void setAtivo(boolean ativo) { this.ativo = ativo; }
 }

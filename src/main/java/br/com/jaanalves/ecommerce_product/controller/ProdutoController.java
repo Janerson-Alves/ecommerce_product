@@ -2,6 +2,8 @@ package br.com.jaanalves.ecommerce_product.controller;
 
 import br.com.jaanalves.ecommerce_product.dto.ProdutoRequestDTO;
 import br.com.jaanalves.ecommerce_product.dto.ProdutoResponseDTO;
+import br.com.jaanalves.ecommerce_product.entities.Produto;
+import br.com.jaanalves.ecommerce_product.repository.ProdutoRepository;
 import br.com.jaanalves.ecommerce_product.services.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,13 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springdoc.core.annotations.ParameterObject;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/produtos")
@@ -26,6 +29,8 @@ public class ProdutoController {
 
     @Autowired
     ProdutoService produtoService;
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
     @Operation(summary = "Cadastro de produtos", description = "Realiza cadastros de produto e salva no banco.")
     @ApiResponses(value = {
@@ -35,7 +40,7 @@ public class ProdutoController {
     @PostMapping
     public ResponseEntity cadastrarProduto(@Valid @RequestBody ProdutoRequestDTO produtoDTO) {
         produtoService.cadastrarProduto(produtoDTO);
-        return ResponseEntity.ok("Produto cadastrado com sucesso");
+    return ResponseEntity.status(HttpStatus.CREATED).body("Produto Cadastrado com Sucesso.");
     }
 
     @Operation(summary = "Lista os produtos cadastrados.", description = "Lista os produtos cadastrados paginalmente.")
@@ -83,5 +88,17 @@ public class ProdutoController {
     public ResponseEntity deletarProduto(@PathVariable Long id) {
         produtoService.excluirProduto(id);
         return ResponseEntity.ok("Produto deletado com sucesso");
+    }
+
+    @Operation(summary = "Reativar produto.", description = "Reativa um produto desativado pelo ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Produto reativado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Produto já está ativo"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado")
+    })
+    @PatchMapping("/{id};reativar")
+    public ResponseEntity reativarProduto(@PathVariable Long id){
+        produtoService.reativarProduto(id);
+        return ResponseEntity.ok("Produto reativado com sucesso");
     }
 }

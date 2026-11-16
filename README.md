@@ -128,4 +128,10 @@ A API possui documentação interativa gerada automaticamente com **SpringDoc Op
 * `201 Created`: Produto cadastrado com sucesso.
 * `400 Bad Request`: Dados inválidos enviados no payload ou falha de validação.
 * `404 Not Found`: Recurso não encontrado pelo ID informado.
-  ...
+* 
+...
+### Contratos e Exemplos (Schemas):
+* Os DTOs de entrada e saída estão anotados com `@Schema`, fornecendo exemplos reais pré-preenchidos diretamente na interface do Swagger UI para agilizar testes e integrações.
+...
+
+* **Exclusão Lógica (Soft Delete) e Reativação:** Produtos excluídos são apenas inativados (`ativo = false`) para manter a integridade histórica no banco de dados, sendo filtrados automaticamente nas buscas e podendo ser restaurados via endpoint `PATCH /api/produtos/{id}/reativar`.

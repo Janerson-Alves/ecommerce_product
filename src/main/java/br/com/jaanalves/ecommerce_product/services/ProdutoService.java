@@ -50,10 +50,14 @@ public class ProdutoService {
     // Listar Produtos
     public Page<ProdutoResponseDTO> listarProdutos(String nome, BigDecimal precoInicio,
                                                    BigDecimal precoFim, Pageable pageable) {
+
+
         // Armazena em uma lista os produtos cadastrados no determinado filtro
-        Page<Produto> listarProdutosPage = produtoRepository.findByNomeContainingIgnoreCaseAndPrecoBetween(
+        Page<Produto> listarProdutosPage = produtoRepository.findByNomeContainingIgnoreCaseAndPrecoBetweenAndAtivoTrue(
                 nome, precoInicio, precoFim, pageable
         );
+
+        // Verifica se o produto está ativo
         // retorna os produtos cadastrados em um DTO
         return listarProdutosPage
                 .map(t -> new ProdutoResponseDTO(t.getId(), t.getNome(), t.getDescricao(),
@@ -125,8 +129,26 @@ public class ProdutoService {
         }
         // Pega as informações do produto
         Produto produto = produtoEncontrado.get();
-
+        // Muda o status do produto para falso.
+        produto.setAtivo(false);
         // Deleta o Produto e salva o banco
-        produtoRepository.delete(produto);
+        produtoRepository.save(produto);
+    }
+
+    public void reativarProduto(Long id) {
+        Optional<Produto> produtoEncontrado = produtoRepository.findById(id);
+
+        if(produtoEncontrado.isEmpty()) {
+            throw new ResourceNotFoundException("ID do produto não encontrado");
+        }
+
+        Produto produto = produtoEncontrado.get();
+
+        if (produto.isAtivo()) {
+            throw new IllegalArgumentException("Produto já consta como ATIVO.");
+        }
+
+        produto.setAtivo(true);
+        produtoRepository.save(produto);
     }
 }

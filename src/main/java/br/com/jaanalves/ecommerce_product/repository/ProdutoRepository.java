@@ -14,7 +14,7 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     Optional<Produto> findById(Long id);
 
     // Busca paginada filtrando por faixa de preço ou nome parcial.
-    Page<Produto> findByNomeContainingIgnoreCaseAndPrecoBetween(
+    Page<Produto> findByNomeContainingIgnoreCaseAndPrecoBetweenAndAtivoTrue(
             String nome,
             BigDecimal precoInicio,
             BigDecimal precoFim,

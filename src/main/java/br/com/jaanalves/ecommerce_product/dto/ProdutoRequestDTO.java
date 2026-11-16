@@ -1,18 +1,23 @@
 package br.com.jaanalves.ecommerce_product.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class ProdutoRequestDTO {
+    @Schema(description = "Nome do produto", example = "Iphone 17 Pro max")
     @NotBlank(message = "O Nome do Produto é obrigatório")
     private String nome;
+    @Schema(description = "Descrição do Produto", example = "256GB novo")
     @NotBlank(message = "A descrição do produto é obrigatório")
     private String descricao;
+    @Schema(description = "Preço do produto", example = "3999.99")
     @NotNull(message = "O valor do produto é obrigatorio")
     @Positive(message = "O preço precisa ser maior que zero")
     private BigDecimal preco;
+    @Schema(description = "Quantidade em estoque disponivel", example = "10")
     @NotNull(message = "A quantidade em estoque é obrigatória")
     @Positive(message = "A quantidade minima no estoque deve ser maior ou igual a 1")
     private Integer quantidadeEstoque;
