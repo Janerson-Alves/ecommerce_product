@@ -5,7 +5,7 @@ import br.com.jaanalves.ecommerce_product.dto.ProdutoResponseDTO;
 import br.com.jaanalves.ecommerce_product.entities.Produto;
 import br.com.jaanalves.ecommerce_product.exceptions.ResourceNotFoundException;
 import br.com.jaanalves.ecommerce_product.repository.ProdutoRepository;
-
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -131,6 +131,8 @@ public class ProdutoService {
         Produto produto = produtoEncontrado.get();
         // Muda o status do produto para falso.
         produto.setAtivo(false);
+        // Setando o produto como estoque zerado
+        produto.setQuantidadeEstoque(0);
         // Deleta o Produto e salva o banco
         produtoRepository.save(produto);
     }
@@ -151,4 +153,69 @@ public class ProdutoService {
         produto.setAtivo(true);
         produtoRepository.save(produto);
     }
+    @Transactional
+    // Aumenta o estoque
+    public void adicionarEstoque(Long id, Integer quantidade) {
+        // Armazena o Id se caso existir
+        Optional<Produto> produtoEncontrado = produtoRepository.findById(id);
+
+        // verifica se o Id não foi encontrado
+        if (produtoEncontrado.isEmpty()) {
+            throw new ResourceNotFoundException("ID do produto não encontrado");
+        }
+
+        //Verifica se a quantidade informada e maior que zero
+        if (quantidade <= 0 ) {
+            throw new IllegalArgumentException("Quantidade informada precisa ser maior que zero");
+        }
+        // Armazena as informacoes do produto
+        Produto produto = produtoEncontrado.get();
+
+
+        // Armazena a quantidade atualizada
+        Integer quantidadeAtualizada = produto.getQuantidadeEstoque() + quantidade;
+        // seta o valor atualizado no atributo do estoque para ser atualizado
+        produto.setQuantidadeEstoque(quantidadeAtualizada);
+        // Salva no banco.
+        produtoRepository.save(produto);
+
+    }
+    @Transactional
+    // Diminui o estoque
+    public void baixarEstoque(Long id, Integer quantidade) {
+        // Armazena o Id se caso existir
+        Optional<Produto> produtoEncontrado = produtoRepository.findById(id);
+
+        // verifica se o Id não foi encontrado
+        if (produtoEncontrado.isEmpty()) {
+            throw new ResourceNotFoundException("ID do produto não encontrado");
+        }
+
+        //Verifica se a quantidade informada e maior que zero
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade informada precisa ser maior que zero");
+        }
+
+
+        // Armazena as informacoes do produto
+        Produto produto = produtoEncontrado.get();
+
+        // verifica se o produto se encontra inativo.
+        if (!produto.isAtivo()) {
+            throw new IllegalArgumentException("Não é possível movimentar estoque de um produto inativo.");
+        }
+
+        // Verifica se o estoque atual e maior que zero
+        if (produto.getQuantidadeEstoque() < quantidade ){
+            throw new IllegalArgumentException("Estoque insuficiente para a operação.");
+        }
+
+        // Armazena a quantidade atualizada
+        Integer quantidadeAtualizada = produto.getQuantidadeEstoque() - quantidade;
+        // seta o valor atualizado no atributo do estoque para ser atualizado
+        produto.setQuantidadeEstoque(quantidadeAtualizada);
+        // Salva no banco.
+        produtoRepository.save(produto);
+    }
+
 }

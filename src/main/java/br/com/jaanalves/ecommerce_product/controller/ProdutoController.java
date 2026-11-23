@@ -101,4 +101,30 @@ public class ProdutoController {
         produtoService.reativarProduto(id);
         return ResponseEntity.ok("Produto reativado com sucesso");
     }
+
+    @Operation(summary = "Adiciona estoque", description = "Adiciona estoque ao produto existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estoque adicionado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Quantidade inválida, produto inativo ou estoque insuficiente"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado")
+    })
+
+    @PatchMapping("/{id}/estoque/adicionar")
+    public ResponseEntity adicionarEstoque(@PathVariable Long id, @RequestBody Integer quantidade) {
+        produtoService.adicionarEstoque(id, quantidade);
+        return ResponseEntity.ok("Estoque adicionado com sucesso");
+    }
+
+    @Operation(summary = "Baixar estoque", description = "Baixa estoque ao produto existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estoque baixado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Quantidade inválida, produto inativo ou estoque insuficiente"),
+            @ApiResponse(responseCode = "404", description = "Produto não encontrado")
+    })
+
+    @PatchMapping("/{id}/estoque/baixar")
+    public ResponseEntity baixarEstoque(@PathVariable Long id, @RequestBody Integer quantidade) {
+        produtoService.baixarEstoque(id, quantidade);
+        return ResponseEntity.ok("Estoque baixado com sucesso.");
+    }
 }

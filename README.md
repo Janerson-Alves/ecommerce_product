@@ -135,3 +135,5 @@ A API possui documentação interativa gerada automaticamente com **SpringDoc Op
 ...
 
 * **Exclusão Lógica (Soft Delete) e Reativação:** Produtos excluídos são apenas inativados (`ativo = false`) para manter a integridade histórica no banco de dados, sendo filtrados automaticamente nas buscas e podendo ser restaurados via endpoint `PATCH /api/produtos/{id}/reativar`.
+
+* **Controle e Movimentação de Estoque:** Endpoints dedicados (`PATCH /api/produtos/{id}/estoque/adicionar` e `PATCH /api/produtos/{id}/estoque/baixar`) com controle transacional (`@Transactional`) e validação de saldo disponível para evitar estoque negativo.
